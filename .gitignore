@@ -1,5 +1,4 @@
 __pycache__/
-*.py
 venv/
 .env
 data/
@@ -12,4 +11,4 @@ models/
 
 .vscode/
 .idea/
-.DS_Store
+.DS_Stores
