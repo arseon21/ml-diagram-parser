@@ -1,0 +1,15 @@
+__pycache__/
+*.py
+venv/
+.env
+data/
+!data/.gitkeep
+
+models/
+*.pt
+*.bin
+*.safetensors
+
+.vscode/
+.idea/
+.DS_Store
