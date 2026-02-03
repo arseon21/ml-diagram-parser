@@ -18,6 +18,7 @@ def _log(message: str) -> None:
 
 @router.post("/analyze")
 async def analyze(file: UploadFile) -> dict:
+    _log(f"Получен запрос /analyze: filename={file.filename!r}, content_type={file.content_type!r}")
     if file.content_type not in {"image/jpeg", "image/png"}:
         raise HTTPException(status_code=415, detail="Не поддерживаемый формат файла")
 

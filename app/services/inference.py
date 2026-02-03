@@ -40,13 +40,17 @@ def _get_qwen_engine() -> QwenEngine:
 
 
 async def process_diagram(image_bytes: bytes) -> Dict[str, object]:
+    _log(f"Старт обработки диаграммы: bytes={len(image_bytes)}")
     image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
     image = _resize_if_needed(image)
+    _log(f"Изображение подготовлено: size={image.size}")
 
     vector_store = _get_vector_store()
     examples = vector_store.search(image, k=2)
+    _log(f"Найдено примеров: {len(examples)}")
 
     qwen = _get_qwen_engine()
     description = await asyncio.to_thread(qwen.generate_description, image, examples)
+    _log("Генерация описания завершена")
 
     return {"description": description, "examples_used": len(examples)}

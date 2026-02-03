@@ -59,7 +59,8 @@ class VectorStore:
             return []
 
         image = query_image.convert("RGB")
-        query_emb = self.model.encode(images=[image], convert_to_tensor=True)
+        # Для CLIPModel в sentence-transformers 5.x изображение передается как элемент списка `sentences`.
+        query_emb = self.model.encode([image], convert_to_tensor=True)
         query_emb = _normalize(query_emb)
 
         embeddings = self._embeddings

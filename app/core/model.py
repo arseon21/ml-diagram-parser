@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+import os
 from typing import List
 
 import torch
@@ -24,12 +25,14 @@ class QwenEngine:
             bnb_4bit_quant_type="nf4",
             bnb_4bit_compute_dtype=torch.float16,
         )
+        # model_path = "Qwen/Qwen2.5-VL-3B-Instruct"
+        model_path = r"C:\Users\alexr\Documents\Qwen2.5-Vl-3B-Instruct"
         self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
-            "Qwen/Qwen2.5-VL-3B-Instruct",
+            model_path,
             quantization_config=bnb_config,
             device_map="auto",
         )
-        self.processor = AutoProcessor.from_pretrained("Qwen/Qwen2.5-VL-3B-Instruct")
+        self.processor = AutoProcessor.from_pretrained(model_path)
 
     def generate_description(self, image: Image.Image, examples: List[str]) -> str:
         examples_text = "\n\n".join(examples) if examples else ""
@@ -54,6 +57,8 @@ class QwenEngine:
 
         try:
             image_inputs, video_inputs = process_vision_info(messages)
+            max_new_tokens = int(os.getenv("QWEN_MAX_NEW_TOKENS", "1024"))
+            _log(f"Запуск генерации: max_new_tokens={max_new_tokens}, examples={len(examples)}")
             inputs = self.processor(
                 text=self.processor.apply_chat_template(messages, add_generation_prompt=True),
                 images=image_inputs,
@@ -63,8 +68,16 @@ class QwenEngine:
             )
             inputs = inputs.to(self.model.device)
 
-            generated_ids = self.model.generate(**inputs, max_new_tokens=1024)
+            generated_ids = self.model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False, num_beams=1)
             output_text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
+            generated_ids_trimmed = generated_ids[:, inputs['input_ids'].shape[1]:]
+            output_text = self.processor.batch_decode(
+                generated_ids_trimmed, 
+                skip_special_tokens=True
+            )[0]
+            del inputs
+            del generated_ids, generated_ids_trimmed
+            torch.cuda.empty_cache()
             return output_text
         except Exception as exc:
             _log(f"Ошибка генерации: {exc}")
