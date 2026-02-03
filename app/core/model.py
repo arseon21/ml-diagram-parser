@@ -26,7 +26,7 @@ class QwenEngine:
             bnb_4bit_compute_dtype=torch.float16,
         )
         model_path = "Qwen/Qwen2.5-VL-3B-Instruct"
-        # model_path = r"C:\Users\alexr\Documents\Qwen2.5-Vl-3B-Instruct"
+        #model_path = r"local\path\Qwen2.5-Vl-3B-Instruct"
         self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
             model_path,
             quantization_config=bnb_config,
@@ -68,7 +68,11 @@ class QwenEngine:
             )
             inputs = inputs.to(self.model.device)
 
-            generated_ids = self.model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False, num_beams=1)
+            generated_ids = self.model.generate(
+                **inputs,
+                max_new_tokens=max_new_tokens,
+                do_sample=False,
+                num_beams=1)
             output_text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
             generated_ids_trimmed = generated_ids[:, inputs['input_ids'].shape[1]:]
             output_text = self.processor.batch_decode(

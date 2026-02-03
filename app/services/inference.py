@@ -20,7 +20,7 @@ def _log(message: str) -> None:
     print(f"[{_ts()}] {message}")
 
 
-def _resize_if_needed(image: Image.Image, max_size: int = 768) -> Image.Image:
+def _resize_if_needed(image: Image.Image, max_size: int = 512) -> Image.Image:
     width, height = image.size
     if width <= max_size and height <= max_size:
         return image
@@ -46,7 +46,7 @@ async def process_diagram(image_bytes: bytes) -> Dict[str, object]:
     _log(f"Изображение подготовлено: size={image.size}")
 
     vector_store = _get_vector_store()
-    examples = vector_store.search(image, k=2)
+    examples = vector_store.search(image, k=1)
     _log(f"Найдено примеров: {len(examples)}")
 
     qwen = _get_qwen_engine()

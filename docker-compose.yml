@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  qwen-diagram-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: qwen-diagram-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./app:/app/app
+    environment:
+      - QWEN_MAX_NEW_TOKENS=1024
+      - CUDA_VISIBLE_DEVICES=0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
