@@ -20,7 +20,7 @@ def _log(message: str) -> None:
     print(f"[{_ts()}] {message}")
 
 
-def _resize_if_needed(image: Image.Image, max_size: int = 1024) -> Image.Image:
+def _resize_if_needed(image: Image.Image, max_size: int = 768) -> Image.Image:
     width, height = image.size
     if width <= max_size and height <= max_size:
         return image

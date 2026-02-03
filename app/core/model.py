@@ -25,8 +25,8 @@ class QwenEngine:
             bnb_4bit_quant_type="nf4",
             bnb_4bit_compute_dtype=torch.float16,
         )
-        # model_path = "Qwen/Qwen2.5-VL-3B-Instruct"
-        model_path = r"C:\Users\alexr\Documents\Qwen2.5-Vl-3B-Instruct"
+        model_path = "Qwen/Qwen2.5-VL-3B-Instruct"
+        # model_path = r"C:\Users\alexr\Documents\Qwen2.5-Vl-3B-Instruct"
         self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
             model_path,
             quantization_config=bnb_config,
