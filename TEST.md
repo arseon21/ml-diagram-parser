@@ -12,3 +12,6 @@ Python 3.12.8
 6. uvicorn app.main:app --reload
 7. в терминале будет ссылка http://localhost:8000 добавить /docs 
 http://localhost:8000/docs 
+<!-- 
+docker compose build
+docker compose up -->

@@ -58,7 +58,7 @@ def main() -> None:
             )
             
             embeddings.append(emb)
-            text_paths.append(str(txt_path))
+            text_paths.append(txt_path.as_posix())
             
             if idx % 10 == 0:
                 _log(f"{idx}/{len(image_paths)}")

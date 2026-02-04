@@ -3,7 +3,10 @@ __pycache__/
 *$py.class
 venv/
 .env
-data/
+data/dataset/
+data/index.npy
+data/paths.json
+docker-compose.override.yml
 
 models/
 *.pt

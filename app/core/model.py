@@ -24,15 +24,26 @@ class QwenEngine:
             load_in_4bit=True,
             bnb_4bit_quant_type="nf4",
             bnb_4bit_compute_dtype=torch.float16,
+            llm_int8_enable_fp32_cpu_offload=True 
         )
-        model_path = "Qwen/Qwen2.5-VL-3B-Instruct"
-        #model_path = r"local\path\Qwen2.5-Vl-3B-Instruct"
+        model_id = "Qwen/Qwen2.5-VL-3B-Instruct"
+        # Выделение максимальной доступной памяти для GPU (0: "..")
+        max_memory = {0: "3.2GiB", "cpu": "12GiB"}
+        _log(f"Загрузка модели {model_id}...")
+
         self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
-            model_path,
-            quantization_config=bnb_config,
+            model_id,
+            torch_dtype=torch.float16,
             device_map="auto",
+            max_memory=max_memory,
+            quantization_config=bnb_config,
+            attn_implementation="sdpa",
+            low_cpu_mem_usage=True,
+            trust_remote_code=True
         )
-        self.processor = AutoProcessor.from_pretrained(model_path)
+        self.processor = AutoProcessor.from_pretrained(model_id)
+        _log(f"CUDA available: {torch.cuda.is_available()}")
+        _log(f"GPU device count: {torch.cuda.device_count()}")
 
     def generate_description(self, image: Image.Image, examples: List[str]) -> str:
         examples_text = "\n\n".join(examples) if examples else ""
@@ -72,6 +83,7 @@ class QwenEngine:
                 **inputs,
                 max_new_tokens=max_new_tokens,
                 do_sample=False,
+                repetition_penalty=1.2,
                 num_beams=1)
             output_text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
             generated_ids_trimmed = generated_ids[:, inputs['input_ids'].shape[1]:]

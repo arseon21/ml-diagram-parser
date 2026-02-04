@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+import torch
 import asyncio
 import io
 from datetime import datetime
@@ -20,7 +20,7 @@ def _log(message: str) -> None:
     print(f"[{_ts()}] {message}")
 
 
-def _resize_if_needed(image: Image.Image, max_size: int = 512) -> Image.Image:
+def _resize_if_needed(image: Image.Image, max_size: int = 768) -> Image.Image:
     width, height = image.size
     if width <= max_size and height <= max_size:
         return image
@@ -31,8 +31,9 @@ def _resize_if_needed(image: Image.Image, max_size: int = 512) -> Image.Image:
 
 @lru_cache(maxsize=1)
 def _get_vector_store() -> VectorStore:
-    return VectorStore(device="cpu")
-
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    _log(f"VectorStore на устройстве: {device}")
+    return VectorStore(device=device)
 
 @lru_cache(maxsize=1)
 def _get_qwen_engine() -> QwenEngine:
@@ -46,7 +47,7 @@ async def process_diagram(image_bytes: bytes) -> Dict[str, object]:
     _log(f"Изображение подготовлено: size={image.size}")
 
     vector_store = _get_vector_store()
-    examples = vector_store.search(image, k=1)
+    examples = vector_store.search(image, k=3)
     _log(f"Найдено примеров: {len(examples)}")
 
     qwen = _get_qwen_engine()
