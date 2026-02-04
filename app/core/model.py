@@ -25,7 +25,7 @@ class QwenEngine:
             bnb_4bit_quant_type="nf4",
             bnb_4bit_compute_dtype=torch.float16
         )
-        model_id = "/app/local_model"
+        model_id =("MODEL_PATH", "Qwen/Qwen2.5-Vl-3B-Instruct")
         # Выделение максимальной доступной памяти для GPU (0: "..")
         max_memory = {0: "3.5GiB", "cpu": "16GiB"}
         _log(f"Загрузка модели {model_id}...")
