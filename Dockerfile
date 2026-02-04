@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:2.4.0-cuda12.1-cudnn9-runtime
+FROM pytorch/pytorch:2.5.1-cuda12.1-cudnn9-runtime
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -24,4 +24,4 @@ RUN mkdir -p data/raw data/dataset/train/images data/dataset/train/texts \
 
 EXPOSE 8000
 
-CMD python -m scripts.split_data && python -m scripts.build_index && uvicorn app.main:app --host 0.0.0.0 --port 8000
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -47,7 +47,7 @@ async def process_diagram(image_bytes: bytes) -> Dict[str, object]:
     _log(f"Изображение подготовлено: size={image.size}")
 
     vector_store = _get_vector_store()
-    examples = vector_store.search(image, k=3)
+    examples = vector_store.search(image, k=2)
     _log(f"Найдено примеров: {len(examples)}")
 
     qwen = _get_qwen_engine()

@@ -1,4 +1,4 @@
-Python 3.12.8
+<!-- Python 3.12.8
 
 1. py -3.12 -m venv venv     
  .\venv\Scripts\activate   
@@ -11,7 +11,7 @@ Python 3.12.8
 5. python -m scripts.build_index
 6. uvicorn app.main:app --reload
 7. в терминале будет ссылка http://localhost:8000 добавить /docs 
-http://localhost:8000/docs 
-<!-- 
+http://localhost:8000/docs  -->
+
 docker compose build
-docker compose up -->
+docker compose up

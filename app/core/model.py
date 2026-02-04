@@ -23,12 +23,11 @@ class QwenEngine:
         bnb_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type="nf4",
-            bnb_4bit_compute_dtype=torch.float16,
-            llm_int8_enable_fp32_cpu_offload=True 
+            bnb_4bit_compute_dtype=torch.float16
         )
-        model_id = "Qwen/Qwen2.5-VL-3B-Instruct"
+        model_id = "/app/local_model"
         # Выделение максимальной доступной памяти для GPU (0: "..")
-        max_memory = {0: "3.2GiB", "cpu": "12GiB"}
+        max_memory = {0: "3.5GiB", "cpu": "16GiB"}
         _log(f"Загрузка модели {model_id}...")
 
         self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
@@ -68,7 +67,7 @@ class QwenEngine:
 
         try:
             image_inputs, video_inputs = process_vision_info(messages)
-            max_new_tokens = int(os.getenv("QWEN_MAX_NEW_TOKENS", "1024"))
+            max_new_tokens = int(os.getenv("QWEN_MAX_NEW_TOKENS", "768"))
             _log(f"Запуск генерации: max_new_tokens={max_new_tokens}, examples={len(examples)}")
             inputs = self.processor(
                 text=self.processor.apply_chat_template(messages, add_generation_prompt=True),

@@ -10,9 +10,10 @@ services:
       - ./data:/app/data
       - ./app:/app/app
       - hf_cache:/root/.cache/huggingface
+      - "C:/Users/alexr/Documents/Qwen2.5-Vl-3B-Instruct:/app/local_model"
     environment:
-      - MODEL_PATH=
-      - QWEN_MAX_NEW_TOKENS=1024
+      - MODEL_PATH=Qwen/Qwen2.5-VL-3B-Instruct
+      - QWEN_MAX_NEW_TOKENS=768
       - CUDA_VISIBLE_DEVICES=0
     deploy:
       resources:
