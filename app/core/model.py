@@ -49,29 +49,76 @@ class QwenEngine:
         messages = [
             {
                 "role": "system",
-                "content": "Ты — OCR-сканер алгоритмов. Ты не анализируешь смысл. Ты только считываешь текст внутри геометрических фигур."
+                "content": """You are a technical diagram analyzer specializing in BPMN, UML, and flowchart diagrams. Your task is to provide precise, structured descriptions of process diagrams in Russian.
+
+                    CORE REQUIREMENTS:
+                    1. Extract ALL text exactly as written in the diagram - do not translate, paraphrase, or modify
+                    2. Identify diagram type (BPMN, UML Activity, Flowchart)
+                    3. Describe flow sequence systematically from start to end
+                    4. Identify all elements: events (circles/ovals), tasks (rectangles), gateways (diamonds), connectors (arrows)
+                    5. NEVER hallucinate or add information not visible in the image
+                    6. NEVER repeat the same information multiple times
+                    7. Keep descriptions concise, technical, and structured
+                    8. Output MUST be in Russian
+
+                    OUTPUT STRUCTURE:
+                    Тип диаграммы: [BPMN/UML/Блок-схема]
+                    Начальное событие: [текст]
+                    Последовательность шагов:
+                    [numbered list with exact text from each element]
+                    Точки принятия решений: [conditions with branch labels]
+                    Конечное событие: [текст]
+                    Дополнительные элементы: [swimlanes, annotations if present]
+
+                    ELEMENT IDENTIFICATION:
+                    - Oval/rounded rectangle at start = Start event
+                    - Rectangle = Task/Activity/Process step
+                    - Diamond = Decision gateway
+                    - Oval/rounded rectangle at end = End event
+                    - Arrows = Sequence flow (note labels like "Да", "Нет")
+                    - Swimlanes = Horizontal/vertical participant lanes
+
+                    CRITICAL RULES:
+                    - Copy text character-by-character from diagram
+                    - List each process step once only
+                    - Follow arrow directions for sequence
+                    - Note all gateway branches with their labels
+                    - If uncertain about element, describe what you see
+                    - Minimum text, maximum precision"""
             },
             {
                 "role": "user",
                 "content": [
                     {"type": "image", "image": image},
-                    {"type": "text", "text": """Задание: Проведи глубокий технический анализ приложенной диаграммы бизнес-процесса (BPMN). Твоя цель — восстановить логику процесса, не пропуская ни одного элемента и связи.
-                        Инструкции по анализу:
-                        Идентификация ролей: Сначала перечисли все горизонтальные или вертикальные дорожки (Lanes/Pools) и назови участников процесса.
-                        Точка входа: Найди стартовое событие (тонкий круг) и начни описание от него.
-                        Строгое следование стрелкам: Описывай шаги только в том порядке, в котором ведут сплошные стрелки (Sequence Flow). Если стрелка возвращается назад — укажи это как цикл.
-                        Логика ветвлений (Gateway): При обнаружении ромбов (шлюзов) обязательно опиши условия: «Если [условие на стрелке], то идем к [шаг А], иначе идем к [шаг Б]».
-                        Межсистемное взаимодействие: Обрати внимание на пунктирные стрелки (Message Flow). Опиши, какие данные или сигналы передаются между разными участниками (дорожками).
-                        Специальные символы: Опиши промежуточные события: конверты (сообщения), часы (таймеры/ожидание), ошибки.
-                        Формат ответа:
-                        Участники процесса: [Список]
-                        Пошаговый алгоритм:
-                        [Роль] : [Действие] -> [Следствие]
-                        ...
-                        Логические развилки: [Описание всех условий IF/THEN]
-                        Статусы завершения: Перечисли все конечные события (жирные круги) и условия достижения каждого из них.
-                        Важно: Используй только тот текст, который написан на самой диаграмме. Если текст неразборчив, опиши блок по его смыслу и положению.
-        ..."""},
+                    {"type": "text", "text": """Analyze this process diagram and provide a structured technical description in Russian.
+
+                        Required output format:
+
+                        Тип диаграммы: [type]
+
+                        Начальное событие: [exact text]
+
+                        Последовательность шагов:
+                        1. [exact text from first box]
+                        2. [exact text from second box]
+                        3. [continue for all steps]
+
+                        Точки принятия решений:
+                        - [decision text] → Да: [path], Нет: [path]
+
+                        Конечное событие: [exact text]
+
+                        Дополнительные элементы: [swimlanes/pools/annotations if any]
+
+                        Rules:
+                        - Use ONLY text visible in the image
+                        - Maintain original text exactly (do not rephrase)
+                        - List steps in execution order following arrows
+                        - Note ALL decision branches
+                        - One mention per element (no repetition)
+                        - Concise technical description
+                        - Output in Russian
+                     """},
                 ],
             },
         ]
