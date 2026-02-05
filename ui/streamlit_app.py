@@ -8,7 +8,7 @@ import time
 import base64
 
 # Настройки
-API_URL = "http://localhost:8000"
+API_URL = os.getenv("API_URL", "http://localhost:8000/analyze")
 REQUEST_TIMEOUT = 90  
 
 # Конфигурация страницы
@@ -310,6 +310,6 @@ with st.sidebar.expander("Оптимизация для быстрого ана�
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #666; font-size: 12px;">
-    Анализатор блок-схем | Таймаут: 90 секунд | Скачивание в TXT формате
+    © 2026 SysCreators Team. Проект для МегаШколы ИТМО.
 </div>
 """, unsafe_allow_html=True)

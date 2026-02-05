@@ -24,4 +24,4 @@ RUN mkdir -p data/raw data/dataset/train/images data/dataset/train/texts \
 
 EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "python scripts/split_data.py && python -m scripts.build_index && uvicorn app.main:app --host 0.0.0.0 --port 8000"]

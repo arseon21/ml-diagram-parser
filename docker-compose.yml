@@ -10,6 +10,7 @@ services:
       - ./data:/app/data
       - ./app:/app/app
       - hf_cache:/root/.cache/huggingface
+      - "C:/Users/alexr/Documents/Qwen2.5-Vl-3B-Instruct:/app/local_model"
     environment:
       - MODEL_PATH=Qwen/Qwen2.5-VL-3B-Instruct
       - QWEN_MAX_NEW_TOKENS=768
@@ -28,5 +29,21 @@ services:
       timeout: 10s
       retries: 3
       start_period: 60s
+  streamlit-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: qwen-diagram-ui
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./ui:/app/ui
+    environment:
+      - API_URL=http://qwen-diagram-service:8000
+    command: ["streamlit", "run", "ui/streamlit_app.py", "--server.address=0.0.0.0", "--server.port=8501"]
+    depends_on:
+      qwen-diagram-service:
+        condition: service_healthy
+    restart: unless-stopped
 volumes:
   hf_cache:
